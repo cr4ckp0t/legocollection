@@ -18,9 +18,25 @@ $password = ConvertTo-SecureString -String (($credsContent.Split("|"))[1]) -AsPl
 $creds = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $username, $password
 Connect-Brickset -APIKey (Get-Content -Path ".\apikey.txt") -Credential $creds | Out-Null
 
-Add-Content -Path ".\output.md" -Value "| Name | ID | Pieces |"
-Add-Content -Path ".\output.md" -Value "| :---- | :----: | :----: |"
+$totalSets = 0
+$totalPieces = 0
+$totalMinifigs = 0
+
+Add-Content -Path ".\output.md" -Value "| Name | ID | Released | Pieces | Minifigs |"
+Add-Content -Path ".\output.md" -Value "| :---- | :----: | :----: | :----: | :----: |"
 
 Get-BricksetSetOwned -OrderBy Name | ForEach-Object {
-    Add-Content -Path ".\output.md" -Value ("| {0} | {1} | {2} |" -f ($_.name, $_.number, $_.pieces)) 
+    $totalSets++
+    $totalPieces += $_.pieces
+
+    if ($null -eq $_.minifigs) {
+        $minifigs = 0
+    }
+    else {
+        $minifigs = $_.minifigs
+        $totalMinifigs += $_.minifigs
+    }
+    Add-Content -Path ".\output.md" -Value ("| [{0}]({1}) | {2} | {3} | {4} | {5} |" -f ($_.name, $_.bricksetURL, $_.number, $_.year, $_.pieces, $minifigs)) 
 }
+
+Add-Content -Path ".\output.md" -Value ("| **Totals:** | **{0}** |  | **{1}** | **{2}** |" -f ($totalSets, $totalPieces, $totalMinifigs))
