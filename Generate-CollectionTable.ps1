@@ -49,7 +49,7 @@ $wantedLegoSets = @()
 
 Get-BricksetSetOwned -OrderBy Name | ForEach-Object {
     $totalOwnedSets++
-    $totalOwnedPieces += $_.pieces
+    $totalOwnedPieces += ($_.pieces * $_.collection.qtyOwned)
 
     if ($null -eq $_.minifigs) {
         $minifigs = "0"
@@ -64,7 +64,7 @@ Get-BricksetSetOwned -OrderBy Name | ForEach-Object {
         "thumbnail"   = $_.image.thumbnailURL;
         "number"      = $_.number;
         "year"        = $_.year;
-        "pieces"      = $_.pieces;
+        "pieces"      = $_.pieces * $_.collection.qtyOwned;
         "minifigs"    = $minifigs;
     }
     Write-Host ("Adding {0} to the owned collection. . ." -f ($_.name.trim() -replace 'â ', '- ')) -ForegroundColor Yellow
