@@ -97,18 +97,20 @@ Get-BricksetSetWanted -OrderBy Name | ForEach-Object {
 # add the output markdown to for the tables
 Add-Content -Path ".\owned.md" -Value "| Name | ID | Released | Pieces | Minifigs |"
 Add-Content -Path ".\owned.md" -Value "| :---- | :----: | :----: | :----: | :----: |"
-Add-Content -Path ".\wanted.md" -Value "| Name | ID | Released | Pieces | Minifigs |"
-Add-Content -Path ".\wanted.md" -Value "| :---- | :----: | :----: | :----: | :----: |"
+#Add-Content -Path ".\wanted.md" -Value "| Name | ID | Released | Pieces | Minifigs |"
+#Add-Content -Path ".\wanted.md" -Value "| :---- | :----: | :----: | :----: | :----: |"
 
 Write-Host ("Outputting {0} sets in the owned collection. . ." -f $totalOwnedSets) -ForegroundColor Yellow
+$linkString = '| <a class="imagehover" href="{0}">{1}<img class="legopic" src="{2}"></a> | {3} | {4} | {5} | {6} |'
 $ownedLegoSets | Sort-Object -Property "name" | ForEach-Object {
-    Add-Content -Path ".\owned.md" -Value ('| <img src="{0}" alt="{1}" height="50" width="50" />&nbsp;&nbsp;[{2}]({3}) | {4} | {5} | {6} | {7} |' -f ($_.thumbnail, $_.name, ($_.name.trim() -replace 'â ', "- "), $_.bricksetURL, $_.number, $_.year, $_.pieces, $_.minifigs)) 
+    Add-Content -Path ".\owned.md" -Value ($linkString -f ($_.bricksetURL, $_.name, $_.thumbnail, $_.number, $_.year, $_.pieces, $_.minifigs))
+    #Add-Content -Path ".\owned.md" -Value ('| <img src="{0}" alt="{1}" height="50" width="50" />&nbsp;&nbsp;[{2}]({3}) | {4} | {5} | {6} | {7} |' -f ($_.thumbnail, $_.name, ($_.name.trim() -replace 'â ', "- "), $_.bricksetURL, $_.number, $_.year, $_.pieces, $_.minifigs)) 
 }
 Add-Content -Path ".\owned.md" -Value ("| **Totals:** | **{0}** |  | **{1}** | **{2}** |" -f ($totalOwnedSets, $totalOwnedPieces, $totalOwnedMinifigs))
 
-Write-Host ("Outputting {0} sets in the owned collection. . ." -f $totalWantedSets) -ForegroundColor Yellow
-$wantedLegoSets | Sort-Object -Property "name" | ForEach-Object {
-    Add-Content -Path ".\wanted.md" -Value ('| <img src="{0}" alt="{1}" height="50" width="50" />&nbsp;&nbsp;[{2}]({3}) | {4} | {5} | {6} | {7} |' -f ($_.thumbnail, $_.name, ($_.name.trim() -replace 'â ', "- "), $_.bricksetURL, $_.number, $_.year, $_.pieces, $_.minifigs)) 
-}
-Add-Content -Path ".\wanted.md" -Value ("| **Totals:** | **{0}** |  | **{1}** | **{2}** |" -f ($totalWantedSets, $totalWantedPieces, $totalWantedMinifigs))
+#Write-Host ("Outputting {0} sets in the owned collection. . ." -f $totalWantedSets) -ForegroundColor Yellow
+#$wantedLegoSets | Sort-Object -Property "name" | ForEach-Object {
+#    Add-Content -Path ".\wanted.md" -Value ('| <img src="{0}" alt="{1}" height="50" width="50" />&nbsp;&nbsp;[{2}]({3}) | {4} | {5} | {6} | {7} |' -f ($_.thumbnail, $_.name, ($_.name.trim() -replace 'â ', "- "), $_.bricksetURL, $_.number, $_.year, $_.pieces, $_.minifigs)) 
+#}
+#Add-Content -Path ".\wanted.md" -Value ("| **Totals:** | **{0}** |  | **{1}** | **{2}** |" -f ($totalWantedSets, $totalWantedPieces, $totalWantedMinifigs))
 Write-Host "Done!" -ForegroundColor Green
