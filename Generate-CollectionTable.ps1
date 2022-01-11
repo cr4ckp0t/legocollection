@@ -100,7 +100,8 @@ Add-Content -Path ".\owned.md" -Value ("| **Totals:** | **{0}** | **{1}*** | **{
 Write-Host ("Outputting {0} minifigs in the collection. . ." -f $ownedMinifigs.Count) -ForegroundColor Yellow
 $minifigString = '| <a href="{0}" target="_blank">{1}</a> | {2} | {3} | {4} |'
 $ownedMinifigs | Sort-Object { $_.name } | ForEach-Object {
-    Add-Content -Path ".\minifigs.md" -Value ($minifigString -f ($_.bricksetUri, $_.name, $_.minifigNumber, $_.ownedInSets, $_.ownedLoose))
+    #$minifigName = $(if ($_.name.length -gt 75) { $_.name.substring(0, 75) } else { $_.name }
+    Add-Content -Path ".\minifigs.md" -Value ($minifigString -f ($_.bricksetUri, $(if ($_.name.length -gt 75) { "{0}. . ." -f $_.name.substring(0, 75) } else { $_.name }), $_.minifigNumber, $_.ownedInSets, $_.ownedLoose))
 }
 
 Write-Host "Done!" -ForegroundColor Green
