@@ -44,6 +44,8 @@ Connect-Brickset -APIKey (Get-Content -Path ".\apikey.txt") -Credential $creds |
 
 $totalOwnedPieces = 0
 $totalOwnedMinifigs = 0
+$totalLooseMinifigs = 0
+$totalSetsMinifigs = 0
 $averageYearTotal = 0
 $ownedLegoSets = @()
 $ownedMinifigs = @()
@@ -72,6 +74,9 @@ Get-BricksetSetOwned -OrderBy Name | ForEach-Object {
 }
 
 Get-BricksetMinifigCollectionOwned | ForEach-Object {
+    $totalLooseMinifigs += $_.ownedLoose
+    $totalSetsMinifigs += $_.ownedInSets
+
     $ownedMinifigs += @{
         "name"          = ($_.name.trim() -replace 'â ', '- ');
         "minifigNumber" = $_.minifigNumber.ToUpper();
@@ -104,5 +109,6 @@ $ownedMinifigs | Sort-Object { $_.name } | ForEach-Object {
     #$minifigName = $(if ($_.name.length -gt 75) { $_.name.substring(0, 75) } else { $_.name }
     Add-Content -Path ".\minifigs.md" -Value ($minifigString -f ($_.bricksetUri, $(if ($_.name.length -gt 75) { "{0}. . ." -f $_.name.substring(0, 75) } else { $_.name }), $_.thumbnail, $_.minifigNumber, $_.ownedInSets, $_.ownedLoose))
 }
+Add-Content -Path ".\minifigs.md" -Value ("| **Totals:** | | **{0}** | **{1}** |" -f ($totalSetsMinifigs, $totalLooseMinifigs))
 
 Write-Host "Done!" -ForegroundColor Green
