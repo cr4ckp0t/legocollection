@@ -76,6 +76,7 @@ Get-BricksetMinifigCollectionOwned | ForEach-Object {
         "name"          = ($_.name.trim() -replace 'â ', '- ');
         "minifigNumber" = $_.minifigNumber.ToUpper();
         "bricksetUri"   = ("https://brickset.com/minifigs/{0}" -f $_.minifigNumber);
+        "thumbnail"     = ("https://img.bricklink.com/ItemImage/MN/0/{0}.png" -f $_.minifigNumber);
         "category"      = $_.category;
         "ownedLoose"    = $_.ownedLoose;
         "ownedInSets"   = $_.ownedInSets;
@@ -89,7 +90,7 @@ Add-Content -Path ".\minifigs.md" -Value "| Name | ID | From Sets | Loose |"
 Add-Content -Path ".\minifigs.md" -Value "| :---- | :----: | :----: | :----: |"
 
 Write-Host ("Outputting {0} sets in the owned collection. . ." -f $ownedLegoSets.Count) -ForegroundColor Yellow
-$linkString = '| <a class="imagehover" href="{0}" target="_blank">{1}<img class="legopic" src="{2}"></a> | <a href="https://www.lego.com/en-us/product/{3}" target="_blank">{4}</a> | {5} | {6} | {7} |'
+$linkString = '| <a class="imagehover" href="{0}" target="_blank">{1}<img class="legopic" src="{2}" /></a> | <a href="https://www.lego.com/en-us/product/{3}" target="_blank">{4}</a> | {5} | {6} | {7} |'
 $ownedLegoSets | Sort-Object { $_.name } | ForEach-Object {
     Add-Content -Path ".\owned.md" -Value ($linkString -f ($_.bricksetUri, $_.name, $_.thumbnail, $_.number, $_.number, $_.year, $_.pieces, $_.minifigs))
     #Add-Content -Path ".\owned.md" -Value ('| <img src="{0}" alt="{1}" height="50" width="50" />&nbsp;&nbsp;[{2}]({3}) | {4} | {5} | {6} | {7} |' -f ($_.thumbnail, $_.name, ($_.name.trim() -replace 'â ', "- "), $_.bricksetURL, $_.number, $_.year, $_.pieces, $_.minifigs)) 
@@ -98,10 +99,10 @@ $averageYear = [math]::Round($averageYearTotal / $ownedLegoSets.Count)
 Add-Content -Path ".\owned.md" -Value ("| **Totals:** | **{0}** | **{1}*** | **{2}** | **{3}** |" -f ($ownedLegoSets.Count, $averageYear, $totalOwnedPieces, $totalOwnedMinifigs))
 
 Write-Host ("Outputting {0} minifigs in the collection. . ." -f $ownedMinifigs.Count) -ForegroundColor Yellow
-$minifigString = '| <a href="{0}" target="_blank">{1}</a> | {2} | {3} | {4} |'
+$minifigString = '| <a class="imagehover" href="{0}" target="_blank">{1}<img class="legopic" src="{2}" /></a> | {3} | {4} | {5} |'
 $ownedMinifigs | Sort-Object { $_.name } | ForEach-Object {
     #$minifigName = $(if ($_.name.length -gt 75) { $_.name.substring(0, 75) } else { $_.name }
-    Add-Content -Path ".\minifigs.md" -Value ($minifigString -f ($_.bricksetUri, $(if ($_.name.length -gt 75) { "{0}. . ." -f $_.name.substring(0, 75) } else { $_.name }), $_.minifigNumber, $_.ownedInSets, $_.ownedLoose))
+    Add-Content -Path ".\minifigs.md" -Value ($minifigString -f ($_.bricksetUri, $(if ($_.name.length -gt 75) { "{0}. . ." -f $_.name.substring(0, 75) } else { $_.name }), $_.thumbnail, $_.minifigNumber, $_.ownedInSets, $_.ownedLoose))
 }
 
 Write-Host "Done!" -ForegroundColor Green
