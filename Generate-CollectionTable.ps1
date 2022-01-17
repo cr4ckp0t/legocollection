@@ -58,8 +58,8 @@ Get-BricksetSetOwned -OrderBy Name | ForEach-Object {
         $minifigs = "0"
     }
     else {
-        $minifigs = $_.minifigs
-        $totalOwnedMinifigs += $_.minifigs
+        $minifigs = $_.minifigs * $_.collection.qtyOwned
+        $totalOwnedMinifigs += ($_.minifigs * $_.collection.qtyOwned)
     }
     $ownedLegoSets += @{
         "name"        = ($_.name.trim() -replace 'â ', '- ');
@@ -70,7 +70,7 @@ Get-BricksetSetOwned -OrderBy Name | ForEach-Object {
         "pieces"      = $_.pieces * $_.collection.qtyOwned;
         "minifigs"    = $minifigs;
     }
-    Write-Host ("Adding {0} to the owned collection. . ." -f ($_.name.trim() -replace 'â ', '- ')) -ForegroundColor Yellow
+    #Write-Host ("Adding {0} to the owned collection. . ." -f ($_.name.trim() -replace 'â ', '- ')) -ForegroundColor Yellow
 }
 
 Get-BricksetMinifigCollectionOwned | ForEach-Object {
@@ -95,9 +95,9 @@ Add-Content -Path ".\minifigs.md" -Value "| Name | ID | From Sets | Loose |"
 Add-Content -Path ".\minifigs.md" -Value "| :---- | :----: | :----: | :----: |"
 
 Write-Host ("Outputting {0} sets in the owned collection. . ." -f $ownedLegoSets.Count) -ForegroundColor Yellow
-$linkString = '| <a class="imagehover" href="{0}" target="_blank">{1}<img class="legopic" src="{2}" /></a> | <a href="https://www.lego.com/en-us/product/{3}" target="_blank">{4}</a> | {5} | {6} | {7} |'
+$linkString = '| <a class="imagehover" href="{0}" target="_blank">{1}<img class="legopic" src="{2}" /></a> | <a href="https://www.lego.com/en-us/product/{3}" target="_blank">{4}</a> | {5} | {6} | <a href="https://brickset.com/minifigs/in-{7}-1" target="_blank">{8}</a> |'
 $ownedLegoSets | Sort-Object { $_.name } | ForEach-Object {
-    Add-Content -Path ".\owned.md" -Value ($linkString -f ($_.bricksetUri, $_.name, $_.thumbnail, $_.number, $_.number, $_.year, $_.pieces, $_.minifigs))
+    Add-Content -Path ".\owned.md" -Value ($linkString -f ($_.bricksetUri, $_.name, $_.thumbnail, $_.number, $_.number, $_.year, $_.pieces, $_.number, $_.minifigs))
     #Add-Content -Path ".\owned.md" -Value ('| <img src="{0}" alt="{1}" height="50" width="50" />&nbsp;&nbsp;[{2}]({3}) | {4} | {5} | {6} | {7} |' -f ($_.thumbnail, $_.name, ($_.name.trim() -replace 'â ', "- "), $_.bricksetURL, $_.number, $_.year, $_.pieces, $_.minifigs)) 
 }
 $averageYear = [math]::Round($averageYearTotal / $ownedLegoSets.Count)
